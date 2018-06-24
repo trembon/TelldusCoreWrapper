@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>TelldusCoreWrapper</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>trembon</Authors>
+    <Company>trembon</Company>
+    <Product>TelldusCore Wrapper</Product>
+    <PackageProjectUrl>https://github.com/trembon/TelldusCoreWrapper</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/trembon/TelldusCoreWrapper/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/trembon/TelldusCoreWrapper</RepositoryUrl>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\TelldusCoreWrapper.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>
