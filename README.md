@@ -1,4 +1,4 @@
-# Telldus Core Wrapper
+# Telldus Core Wrapper [![NuGet](https://img.shields.io/nuget/v/TelldusCoreWrapper.svg?style=flat-square)](https://www.nuget.org/packages/TelldusCoreWrapper/)
 A wrapper for the Telldus Core written in C# for .NET Standard 2.0.
 
 Sharing the code written for a home project of mine if anyone else could find this useful.
