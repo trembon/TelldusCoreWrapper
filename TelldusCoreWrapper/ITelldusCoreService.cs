@@ -112,7 +112,7 @@ namespace TelldusCoreWrapper
         /// <param name="sensor">The sensor.</param>
         /// <returns>List of all values for the sensor.</returns>
         IEnumerable<SensorValue> GetSensorValues(Sensor sensor);
-
+        
 
         /// <summary>
         /// Adds a device to the Telldus service.

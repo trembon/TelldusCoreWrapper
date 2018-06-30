@@ -34,6 +34,11 @@ namespace TelldusCoreWrapper
         /// The value string size.
         /// </summary>
         private const int VALUE_STRING_SIZE = 20;
+
+        /// <summary>
+        /// The name the Telldus service will return if requesting a device that does not exist.
+        /// </summary>
+        private const string NOT_EXISTING_DEVICE_NAME = "UNKNOWN";
         #endregion
 
         private ManualResetEvent eventThread;
@@ -187,6 +192,12 @@ namespace TelldusCoreWrapper
             string name = Marshal.PtrToStringAnsi(nameIntPtr);
             NativeWrapper.tdReleaseString(nameIntPtr);
 
+            DeviceMethods allMethods = GetAllMethods();
+            DeviceMethods supportedMethods = (DeviceMethods)NativeWrapper.tdMethods(deviceId, (int)allMethods);
+
+            if (name == NOT_EXISTING_DEVICE_NAME && supportedMethods == 0)
+                return null;
+
             IntPtr modelIntPtr = NativeWrapper.tdGetModel(deviceId);
             string model = Marshal.PtrToStringAnsi(modelIntPtr);
             NativeWrapper.tdReleaseString(modelIntPtr);
@@ -194,9 +205,6 @@ namespace TelldusCoreWrapper
             IntPtr protocolIntPtr = NativeWrapper.tdGetProtocol(deviceId);
             string protocol = Marshal.PtrToStringAnsi(protocolIntPtr);
             NativeWrapper.tdReleaseString(protocolIntPtr);
-
-            DeviceMethods allMethods = GetAllMethods();
-            DeviceMethods supportedMethods = (DeviceMethods)NativeWrapper.tdMethods(deviceId, (int)allMethods);
 
             return new Device
             {
@@ -217,7 +225,7 @@ namespace TelldusCoreWrapper
         public IEnumerable<Device> GetDevices()
         {
             int numberOfDevices = NativeWrapper.tdGetNumberOfDevices();
-            for(int i = 0; i < numberOfDevices; i++)
+            for (int i = 0; i < numberOfDevices; i++)
             {
                 int deviceId = NativeWrapper.tdGetDeviceId(i);
                 yield return GetDevice(deviceId);
@@ -236,7 +244,7 @@ namespace TelldusCoreWrapper
             IntPtr model = Marshal.AllocHGlobal(Marshal.SystemDefaultCharSize * MODEL_STRING_SIZE);
             IntPtr id = Marshal.AllocHGlobal(sizeof(int));
             IntPtr dataType = Marshal.AllocHGlobal(sizeof(int));
-            
+
             while (NativeWrapper.tdSensor(protocol, PROTOCOL_STRING_SIZE, model, MODEL_STRING_SIZE, id, dataType) == (int)ResultCode.Success)
             {
                 yield return new Sensor
@@ -267,7 +275,7 @@ namespace TelldusCoreWrapper
             IntPtr model = new IntPtr();
             IntPtr value = Marshal.AllocHGlobal(Marshal.SystemDefaultCharSize * VALUE_STRING_SIZE);
             IntPtr timestamp = Marshal.AllocHGlobal(sizeof(int));
-            
+
             foreach (SensorValueType sensorValueType in Enum.GetValues(typeof(SensorValueType)))
             {
                 if (!sensor.Sensors.HasFlag(sensorValueType))
@@ -277,7 +285,7 @@ namespace TelldusCoreWrapper
                 model = Marshal.StringToHGlobalAnsi(sensor.Model);
 
                 NativeWrapper.tdSensorValue(protocol, model, sensor.ID, (int)sensorValueType, value, VALUE_STRING_SIZE, timestamp);
-                
+
                 yield return new SensorValue
                 {
                     SensorID = sensor.ID,
