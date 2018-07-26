@@ -8,7 +8,7 @@ namespace TelldusCoreWrapper.Entities
     /// <summary>
     /// Represents a value for a specific sensor type from the Telldus service.
     /// </summary>
-    public class SensorValue
+    public sealed class SensorValue
     {
         /// <summary>
         /// Gets or sets the sensor identifier.
@@ -41,5 +41,10 @@ namespace TelldusCoreWrapper.Entities
         /// The value.
         /// </value>
         public string Value { get; set; }
+
+        internal SensorValue()
+        {
+
+        }
     }
 }

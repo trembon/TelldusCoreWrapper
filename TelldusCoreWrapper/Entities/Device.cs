@@ -8,7 +8,7 @@ namespace TelldusCoreWrapper.Entities
     /// <summary>
     /// Represents a device from the Telldus service.
     /// </summary>
-    public class Device
+    public sealed class Device
     {
         /// <summary>
         /// Gets or sets the identifier.
@@ -49,5 +49,10 @@ namespace TelldusCoreWrapper.Entities
         /// The supported methods.
         /// </value>
         public DeviceMethods SupportedMethods { get; internal set; }
+
+        internal Device()
+        {
+
+        }
     }
 }

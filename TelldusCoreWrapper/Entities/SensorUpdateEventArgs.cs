@@ -18,5 +18,9 @@ namespace TelldusCoreWrapper.Entities
         /// The value.
         /// </value>
         public SensorValue Value { get; internal set; }
+
+        internal SensorUpdateEventArgs()
+        {
+        }
     }
 }

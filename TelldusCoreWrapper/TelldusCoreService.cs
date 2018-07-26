@@ -389,8 +389,8 @@ namespace TelldusCoreWrapper
         }
 
         #region Event delegate methods
-        
-        public void TDDeviceEvent(int deviceId, int method, IntPtr data, int callbackId, IntPtr context)
+
+        private void TDDeviceEvent(int deviceId, int method, IntPtr data, int callbackId, IntPtr context)
         {
             string parsedData = Marshal.PtrToStringAnsi(data);
 
@@ -402,12 +402,12 @@ namespace TelldusCoreWrapper
             CommandSent.Trigger(this, eventArgs);
         }
 
-        public void TDDeviceChangeEvent(int deviceId, int changeEvent, int changeType, int callbackId, IntPtr context)
+        private void TDDeviceChangeEvent(int deviceId, int changeEvent, int changeType, int callbackId, IntPtr context)
         {
             // TODO: implement?
         }
 
-        public void TDRawDeviceEvent(IntPtr data, int controllerId, int callbackId, IntPtr context)
+        private void TDRawDeviceEvent(IntPtr data, int controllerId, int callbackId, IntPtr context)
         {
             string parsedData = Marshal.PtrToStringAnsi(data);
             // TODO: implement?
@@ -433,7 +433,7 @@ namespace TelldusCoreWrapper
             SensorUpdated.Trigger(this, eventArgs);
         }
 
-        public void TDControllerEvent(int controllerId, int changeEvent, int changeType, IntPtr newValue, int callbackId, IntPtr context)
+        private void TDControllerEvent(int controllerId, int changeEvent, int changeType, IntPtr newValue, int callbackId, IntPtr context)
         {
             string parsedNewValue = Marshal.PtrToStringAnsi(newValue);
 
