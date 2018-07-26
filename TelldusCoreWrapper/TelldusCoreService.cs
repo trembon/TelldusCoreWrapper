@@ -42,12 +42,23 @@ namespace TelldusCoreWrapper
         #endregion
 
         private ManualResetEvent eventThread;
+
+        private NativeWrapper.TDDeviceEvent deviceEvent;
+        private NativeWrapper.TDDeviceChangeEvent deviceChangeEvent;
+        private NativeWrapper.TDRawDeviceEvent rawDeviceEvent;
         private NativeWrapper.TDSensorEvent sensorEvent;
+        private NativeWrapper.TDControllerEvent controllerEvent;
 
         /// <summary>
         /// Occurs when a sensor sends an updated value to the Tellstick device.
         /// </summary>
         public event EventHandler<SensorUpdateEventArgs> SensorUpdated;
+
+        /// <summary>
+        /// Occurs when a command is sent to a device.
+        /// This event can also trigger if an external source sends a command, like a remote.
+        /// </summary>
+        public event EventHandler<CommandSentEventArgs> CommandSent;
 
 
         /// <summary>
@@ -58,8 +69,17 @@ namespace TelldusCoreWrapper
         {
             NativeWrapper.tdInit();
 
+            deviceEvent = TDDeviceEvent;
+            deviceChangeEvent = TDDeviceChangeEvent;
+            rawDeviceEvent = TDRawDeviceEvent;
             sensorEvent = TDSensorEvent;
+            controllerEvent = TDControllerEvent;
+
+            NativeWrapper.tdRegisterDeviceEvent(deviceEvent, IntPtr.Zero);
+            NativeWrapper.tdRegisterDeviceChangeEvent(deviceChangeEvent, IntPtr.Zero);
+            NativeWrapper.tdRegisterRawDeviceEvent(rawDeviceEvent, IntPtr.Zero);
             NativeWrapper.tdRegisterSensorEvent(sensorEvent, IntPtr.Zero);
+            NativeWrapper.tdRegisterControllerEvent(controllerEvent, IntPtr.Zero);
         }
 
         /// <summary>
@@ -129,7 +149,7 @@ namespace TelldusCoreWrapper
         }
 
         /// <summary>
-        /// Turns the off the specified device.
+        /// Turns off the specified device.
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>
         /// <returns>
@@ -141,7 +161,7 @@ namespace TelldusCoreWrapper
         }
 
         /// <summary>
-        /// Turns the on the specified device.
+        /// Turns on the specified device.
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>
         /// <returns>
@@ -369,6 +389,30 @@ namespace TelldusCoreWrapper
         }
 
         #region Event delegate methods
+        
+        public void TDDeviceEvent(int deviceId, int method, IntPtr data, int callbackId, IntPtr context)
+        {
+            string parsedData = Marshal.PtrToStringAnsi(data);
+
+            Device device = GetDevice(deviceId);
+            if (device == null)
+                return;
+
+            CommandSentEventArgs eventArgs = new CommandSentEventArgs(device, (DeviceMethods)method, parsedData);
+            CommandSent.Trigger(this, eventArgs);
+        }
+
+        public void TDDeviceChangeEvent(int deviceId, int changeEvent, int changeType, int callbackId, IntPtr context)
+        {
+            // TODO: implement?
+        }
+
+        public void TDRawDeviceEvent(IntPtr data, int controllerId, int callbackId, IntPtr context)
+        {
+            string parsedData = Marshal.PtrToStringAnsi(data);
+            // TODO: implement?
+        }
+
         private void TDSensorEvent(IntPtr protocol, IntPtr model, int id, int dataType, IntPtr value, int timestamp, int callbackId, IntPtr context)
         {
             string parsedProtocol = Marshal.PtrToStringAnsi(protocol);
@@ -387,6 +431,16 @@ namespace TelldusCoreWrapper
             };
 
             SensorUpdated.Trigger(this, eventArgs);
+        }
+
+        public void TDControllerEvent(int controllerId, int changeEvent, int changeType, IntPtr newValue, int callbackId, IntPtr context)
+        {
+            string parsedNewValue = Marshal.PtrToStringAnsi(newValue);
+
+            // TODO: implement
+            // DEMO DATA in newValue
+            // class:command;protocol:arctech;model:selflearning;house:23284734;unit:16;group:0;method:turnon;
+            // class:command;protocol:everflourish;model:selflearning;house:13503;unit:4;method:turnon;
         }
         #endregion
 

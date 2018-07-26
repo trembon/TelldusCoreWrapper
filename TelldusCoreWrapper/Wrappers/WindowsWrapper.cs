@@ -13,7 +13,19 @@ namespace TelldusCoreWrapper.Wrappers
         public static extern void tdInit();
 
         [DllImport(TELLDUS_CORE_DLL)]
+        public static extern int tdRegisterDeviceEvent(NativeWrapper.TDDeviceEvent eventFunction, IntPtr context);
+
+        [DllImport(TELLDUS_CORE_DLL)]
+        public static extern int tdRegisterDeviceChangeEvent(NativeWrapper.TDDeviceChangeEvent eventFunction, IntPtr context);
+
+        [DllImport(TELLDUS_CORE_DLL)]
+        public static extern int tdRegisterRawDeviceEvent(NativeWrapper.TDRawDeviceEvent eventFunction, IntPtr context);
+
+        [DllImport(TELLDUS_CORE_DLL)]
         public static extern int tdRegisterSensorEvent(NativeWrapper.TDSensorEvent eventFunction, IntPtr context);
+
+        [DllImport(TELLDUS_CORE_DLL)]
+        public static extern int tdRegisterControllerEvent(NativeWrapper.TDControllerEvent eventFunction, IntPtr context);
 
         [DllImport(TELLDUS_CORE_DLL)]
         public static extern void tdClose();

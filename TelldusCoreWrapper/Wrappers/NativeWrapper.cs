@@ -7,7 +7,11 @@ namespace TelldusCoreWrapper.Wrappers
 {
     internal static class NativeWrapper
     {
+        public delegate void TDDeviceEvent(int deviceId, int method, IntPtr data, int callbackId, IntPtr context);
+        public delegate void TDDeviceChangeEvent(int deviceId, int changeEvent, int changeType, int callbackId, IntPtr context);
+        public delegate void TDRawDeviceEvent(IntPtr data, int controllerId, int callbackId, IntPtr context);
         public delegate void TDSensorEvent(IntPtr protocol, IntPtr model, int id, int dataType, IntPtr value, int timestamp, int callbackId, IntPtr context);
+        public delegate void TDControllerEvent(int controllerId, int changeEvent, int changeType, IntPtr newValue, int callbackId, IntPtr context);
 
         private static bool isWindows = false;
 
@@ -28,6 +32,42 @@ namespace TelldusCoreWrapper.Wrappers
             }
         }
 
+        public static int tdRegisterDeviceEvent(TDDeviceEvent eventFunction, IntPtr context)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdRegisterDeviceEvent(eventFunction, context);
+            }
+            else
+            {
+                return UnixWrapper.tdRegisterDeviceEvent(eventFunction, context);
+            }
+        }
+
+        public static int tdRegisterDeviceChangeEvent(TDDeviceChangeEvent eventFunction, IntPtr context)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdRegisterDeviceChangeEvent(eventFunction, context);
+            }
+            else
+            {
+                return UnixWrapper.tdRegisterDeviceChangeEvent(eventFunction, context);
+            }
+        }
+
+        public static int tdRegisterRawDeviceEvent(TDRawDeviceEvent eventFunction, IntPtr context)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdRegisterRawDeviceEvent(eventFunction, context);
+            }
+            else
+            {
+                return UnixWrapper.tdRegisterRawDeviceEvent(eventFunction, context);
+            }
+        }
+
         public static int tdRegisterSensorEvent(TDSensorEvent eventFunction, IntPtr context)
         {
             if (isWindows)
@@ -37,6 +77,18 @@ namespace TelldusCoreWrapper.Wrappers
             else
             {
                 return UnixWrapper.tdRegisterSensorEvent(eventFunction, context);
+            }
+        }
+
+        public static int tdRegisterControllerEvent(TDControllerEvent eventFunction, IntPtr context)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdRegisterControllerEvent(eventFunction, context);
+            }
+            else
+            {
+                return UnixWrapper.tdRegisterControllerEvent(eventFunction, context);
             }
         }
 

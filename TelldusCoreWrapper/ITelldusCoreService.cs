@@ -16,6 +16,12 @@ namespace TelldusCoreWrapper
         /// </summary>
         event EventHandler<SensorUpdateEventArgs> SensorUpdated;
 
+        /// <summary>
+        /// Occurs when a command is sent to a device.
+        /// This event can also trigger if an external source sends a command, like a remote.
+        /// </summary>
+        event EventHandler<CommandSentEventArgs> CommandSent;
+
 
         /// <summary>
         /// Initializes the Telldus library.

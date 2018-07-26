@@ -9,7 +9,7 @@ namespace TelldusCoreWrapper.Entities
     /// Event arguments for a sensor update event.
     /// </summary>
     /// <seealso cref="System.EventArgs" />
-    public class SensorUpdateEventArgs : EventArgs
+    public sealed class SensorUpdateEventArgs : EventArgs
     {
         /// <summary>
         /// Gets the sensor value.
