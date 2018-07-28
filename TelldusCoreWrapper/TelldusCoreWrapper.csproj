@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TelldusCoreWrapper</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>trembon</Authors>
     <Company>trembon</Company>
     <Product>TelldusCore Wrapper</Product>
@@ -15,9 +15,10 @@
     <PackageReleaseNotes></PackageReleaseNotes>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>A wrapper for the TelldusCore service written in C#.
-This wrapper allowes the creator to speak with devices that supports the 433MHz communication standard for smart homes.
+This wrapper allowes the developer to speak with devices that supports the 433MHz communication standard for smart homes.
 This wrapper requires the TelldusCore service to be installed and a connected controller like the Tellstick Duo.</Description>
-    <RepositoryType>trembon and contributors</RepositoryType>
+    <RepositoryType></RepositoryType>
+    <Copyright>trembon and contributors</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
