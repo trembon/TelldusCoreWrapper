@@ -6,17 +6,17 @@ using TelldusCoreWrapper.Enums;
 namespace TelldusCoreWrapper.Entities
 {
     /// <summary>
-    /// Event arguments for a command sent event.
+    /// Event arguments for receiving a command.
     /// </summary>
-    public sealed class CommandSentEventArgs : EventArgs
+    public sealed class CommandReceivedEventArgs : EventArgs
     {
         /// <summary>
-        /// The device that the command was sent to.
+        /// The device that the command was received for.
         /// </summary>
         public Device Device { get; }
 
         /// <summary>
-        /// The command that was sent.
+        /// The command that was received.
         /// </summary>
         public DeviceMethods Command { get; }
 
@@ -25,7 +25,7 @@ namespace TelldusCoreWrapper.Entities
         /// </summary>
         public string Parameter { get; }
 
-        internal CommandSentEventArgs(Device device, DeviceMethods command, string parameter)
+        internal CommandReceivedEventArgs(Device device, DeviceMethods command, string parameter)
         {
             this.Device = device;
             this.Command = command;

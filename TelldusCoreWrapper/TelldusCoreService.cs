@@ -55,10 +55,18 @@ namespace TelldusCoreWrapper
         public event EventHandler<SensorUpdateEventArgs> SensorUpdated;
 
         /// <summary>
-        /// Occurs when a command is sent to a device.
-        /// This event can also trigger if an external source sends a command, like a remote.
+        /// Occurs when a command is received for a device.
+        /// Devices needs to be registered in your configuration to trigger this event.
+        /// This event triggers when sending a command to one of your devices or a external source, like a remote, is used.
         /// </summary>
-        public event EventHandler<CommandSentEventArgs> CommandSent;
+        public event EventHandler<CommandReceivedEventArgs> CommandReceived;
+
+        /// <summary>
+        /// Occurs when a raw command is received.
+        /// This event will trigger when receiving commands for devices that are not registered in your configuration.
+        /// Unregistered devices that can trigger this event are for example a remote or a door sensor.
+        /// </summary>
+        public event EventHandler<RawCommandReceivedEventArgs> RawCommandReceived;
 
 
         /// <summary>
@@ -389,7 +397,6 @@ namespace TelldusCoreWrapper
         }
 
         #region Event delegate methods
-
         private void TDDeviceEvent(int deviceId, int method, IntPtr data, int callbackId, IntPtr context)
         {
             string parsedData = Marshal.PtrToStringAnsi(data);
@@ -398,8 +405,8 @@ namespace TelldusCoreWrapper
             if (device == null)
                 return;
 
-            CommandSentEventArgs eventArgs = new CommandSentEventArgs(device, (DeviceMethods)method, parsedData);
-            CommandSent.Trigger(this, eventArgs);
+            CommandReceivedEventArgs eventArgs = new CommandReceivedEventArgs(device, (DeviceMethods)method, parsedData);
+            CommandReceived.Trigger(this, eventArgs);
         }
 
         private void TDDeviceChangeEvent(int deviceId, int changeEvent, int changeType, int callbackId, IntPtr context)
@@ -410,7 +417,11 @@ namespace TelldusCoreWrapper
         private void TDRawDeviceEvent(IntPtr data, int controllerId, int callbackId, IntPtr context)
         {
             string parsedData = Marshal.PtrToStringAnsi(data);
-            // TODO: implement?
+            if (string.IsNullOrWhiteSpace(parsedData))
+                return;
+
+            RawCommandReceivedEventArgs eventArgs = new RawCommandReceivedEventArgs(controllerId, parsedData);
+            RawCommandReceived.Trigger(this, eventArgs);
         }
 
         private void TDSensorEvent(IntPtr protocol, IntPtr model, int id, int dataType, IntPtr value, int timestamp, int callbackId, IntPtr context)
@@ -436,11 +447,7 @@ namespace TelldusCoreWrapper
         private void TDControllerEvent(int controllerId, int changeEvent, int changeType, IntPtr newValue, int callbackId, IntPtr context)
         {
             string parsedNewValue = Marshal.PtrToStringAnsi(newValue);
-
-            // TODO: implement
-            // DEMO DATA in newValue
-            // class:command;protocol:arctech;model:selflearning;house:23284734;unit:16;group:0;method:turnon;
-            // class:command;protocol:everflourish;model:selflearning;house:13503;unit:4;method:turnon;
+            // TODO: implement?
         }
         #endregion
 

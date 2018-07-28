@@ -17,10 +17,18 @@ namespace TelldusCoreWrapper
         event EventHandler<SensorUpdateEventArgs> SensorUpdated;
 
         /// <summary>
-        /// Occurs when a command is sent to a device.
-        /// This event can also trigger if an external source sends a command, like a remote.
+        /// Occurs when a command is received for a device.
+        /// Devices needs to be registered in your configuration to trigger this event.
+        /// This event triggers when sending a command to one of your devices or a external source, like a remote, is used.
         /// </summary>
-        event EventHandler<CommandSentEventArgs> CommandSent;
+        event EventHandler<CommandReceivedEventArgs> CommandReceived;
+        
+        /// <summary>
+        /// Occurs when a raw command is received.
+        /// This event will trigger when receiving commands for devices that are not registered in your configuration.
+        /// Unregistered devices that can trigger this event are for example a remote or a door sensor.
+        /// </summary>
+        event EventHandler<RawCommandReceivedEventArgs> RawCommandReceived;
 
 
         /// <summary>
