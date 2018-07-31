@@ -86,6 +86,20 @@ namespace TelldusCoreWrapper
         ResultCode TurnOff(int deviceId);
 
         /// <summary>
+        /// Sends the bell command to the specified device.
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <returns>Result of the command.</returns>
+        ResultCode Bell(int deviceId);
+
+        /// <summary>
+        /// Dims a device with the specified level (0-255).
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <returns>Result of the command.</returns>
+        ResultCode Dim(int deviceId, int level);
+
+        /// <summary>
         /// Sends to learn command to the specified device.
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>

@@ -41,6 +41,12 @@ namespace TelldusCoreWrapper.Wrappers
         public static extern int tdTurnOff(int intDeviceId);
 
         [DllImport(LIB_TELLDUS_CORE_SO)]
+        public static extern int tdBell(int intDeviceId);
+
+        [DllImport(LIB_TELLDUS_CORE_SO)]
+        public static extern int tdDim(int intDeviceId, IntPtr level);
+
+        [DllImport(LIB_TELLDUS_CORE_SO)]
         public static extern int tdLearn(int intDeviceId);
 
         [DllImport(LIB_TELLDUS_CORE_SO)]

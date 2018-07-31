@@ -140,6 +140,30 @@ namespace TelldusCoreWrapper.Wrappers
                 return UnixWrapper.tdTurnOff(intDeviceId);
             }
         }
+        
+        public static int tdBell(int intDeviceId)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdBell(intDeviceId);
+            }
+            else
+            {
+                return UnixWrapper.tdBell(intDeviceId);
+            }
+        }
+
+        public static int tdDim(int intDeviceId, IntPtr level)
+        {
+            if (isWindows)
+            {
+                return WindowsWrapper.tdDim(intDeviceId, level);
+            }
+            else
+            {
+                return UnixWrapper.tdDim(intDeviceId, level);
+            }
+        }
 
         public static int tdLearn(int intDeviceId)
         {

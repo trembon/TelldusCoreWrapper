@@ -150,6 +150,8 @@ namespace TelldusCoreWrapper
             {
                 case DeviceMethods.TurnOff: return TurnOff(deviceId);
                 case DeviceMethods.TurnOn: return TurnOn(deviceId);
+                case DeviceMethods.Bell: return Bell(deviceId);
+                case DeviceMethods.Dim: return Dim(deviceId, Convert.ToInt32(parameter));
                 case DeviceMethods.Learn: return Learn(deviceId);
 
                 default: return ResultCode.MethodNotSupported;
@@ -178,6 +180,36 @@ namespace TelldusCoreWrapper
         public ResultCode TurnOn(int deviceId)
         {
             return (ResultCode)NativeWrapper.tdTurnOn(deviceId);
+        }
+
+        /// <summary>
+        /// Sends the bell command to the specified device.
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <returns>Result of the command.</returns>
+        public ResultCode Bell(int deviceId)
+        {
+            return (ResultCode)NativeWrapper.tdBell(deviceId);
+        }
+        
+        /// <summary>
+        /// Dims a device with the specified level (0-255).
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <returns>Result of the command.</returns>
+        public ResultCode Dim(int deviceId, int level)
+        {
+            if (level < 0 || level > 255)
+                throw new ArgumentOutOfRangeException(nameof(level), $"Parameter '{nameof(level)}' should be between 0 and 255.");
+
+            IntPtr levelPointer = Marshal.AllocHGlobal(sizeof(int));
+            Marshal.WriteInt32(levelPointer, level);
+
+            ResultCode result = (ResultCode)NativeWrapper.tdDim(deviceId, levelPointer);
+            
+            Marshal.FreeHGlobal(levelPointer);
+
+            return result;
         }
 
         /// <summary>
