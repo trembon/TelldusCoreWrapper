@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using TelldusCoreWrapper.Enums;
 
@@ -42,6 +44,8 @@ namespace TelldusCoreWrapper.Entities
         /// </value>
         public string Protocol { get; internal set; }
 
+        public IReadOnlyDictionary<string, string> Parameters { get; internal set; }
+
         /// <summary>
         /// Gets or sets the supported methods (Flags).
         /// </summary>
@@ -52,7 +56,16 @@ namespace TelldusCoreWrapper.Entities
 
         internal Device()
         {
+            Parameters = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>());
+        }
 
+        internal Device(string protocol, string model, IEnumerable<string> parameters)
+        {
+            this.Protocol = protocol;
+            this.Model = model;
+
+            Dictionary<string, string> parameterDictionary = parameters.ToDictionary(k => k, v => string.Empty);
+            this.Parameters = new ReadOnlyDictionary<string, string>(parameterDictionary);
         }
     }
 }
