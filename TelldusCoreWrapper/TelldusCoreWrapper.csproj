@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>TelldusCoreWrapper</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>trembon</Authors>
     <Company>trembon</Company>
     <Product>TelldusCore Wrapper</Product>
