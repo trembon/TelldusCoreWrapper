@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TelldusCoreWrapper
 {
+    /// <summary>
+    /// A service to validate Telldus devices before adding them to the configuration.
+    /// </summary>
+    /// <seealso cref="TelldusCoreWrapper.ITelldusDeviceValidationService" />
     public class TelldusDeviceValidationService : ITelldusDeviceValidationService
     {
+        #region Collection classes
         private class Protocol
         {
             public string Name { get; set; }
@@ -57,6 +63,7 @@ namespace TelldusCoreWrapper
 
             public string ValidationRegex { get; set; }
         }
+        #endregion
 
         private const string REGEX_A_TO_P = "[A-P]";
         private const string REGEX_1_TO_4 = "[1-4]";
@@ -64,31 +71,9 @@ namespace TelldusCoreWrapper
         private const string REGEX_1_TO_16 = "[2-9]|1[0-6]?";
         private const string REGEX_TRUE_FALSE = "true|false";
 
-        //private static List<Device> devices = new List<Device>
-        //{
-        //    new Device("arctech", "bell", new string[]{ "house" })
-        //};
-
         private static List<Protocol> validationData = new List<Protocol>();
 
-        //private static string[] protocols = new string[]
-        //{
-        //    "arctech",
-        //    "brateck",
-        //    "everflourish",
-        //    "fuhaote",
-        //    "hasta",
-        //    "ikea",
-        //    "kangtai",
-        //    "risingsun",
-        //    "sartano",
-        //    "silvanchip",
-        //    "upm",
-        //    "waveman",
-        //    "x10",
-        //    "yidong"
-        //};
-
+        #region Initialization
         static TelldusDeviceValidationService()
         {
             Initialize();
@@ -181,56 +166,173 @@ namespace TelldusCoreWrapper
             configure(protocol);
             validationData.Add(protocol);
         }
+        #endregion
 
+        #region Get methods
+        /// <summary>
+        /// Gets all the protocols.
+        /// </summary>
+        /// <returns>
+        /// List of valid protocols.
+        /// </returns>
         public IEnumerable<string> GetProtocols()
         {
             return validationData
                 .Select(p => p.Name);
         }
 
+        /// <summary>
+        /// Gets all the models for all protocols.
+        /// </summary>
+        /// <returns>
+        /// Distinct list of all valid models.
+        /// </returns>
         public IEnumerable<string> GetAllModels()
         {
             return validationData
                 .SelectMany(p => p.Models)
-                .Select(m => m.Name);
+                .Select(m => m.Name)
+                .Distinct();
         }
 
+        /// <summary>
+        /// Gets the models for a specific protocol.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <returns>
+        /// List of valid models for the specified protocol.
+        /// </returns>
         public IEnumerable<string> GetModels(string protocol)
         {
             return validationData
-                .FirstOrDefault(p => p.Name.Equals(protocol, StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault(p => p.Name.Equals(protocol, StringComparison.Ordinal))
                 ?.Models
                 .Select(m => m.Name);
         }
 
+        /// <summary>
+        /// Gets the parameters for a specific protocol/model combination.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <param name="model">The model.</param>
+        /// <returns>
+        /// List of valid parameters for the specified protocol/model.
+        /// </returns>
         public IEnumerable<string> GetParameters(string protocol, string model)
         {
             return validationData
-                .FirstOrDefault(p => p.Name.Equals(protocol, StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault(p => p.Name.Equals(protocol, StringComparison.Ordinal))
                 ?.Models
-                .FirstOrDefault(m => m.Name.Equals(model, StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault(m => m.Name.Equals(model, StringComparison.Ordinal))
                 ?.Parameters
                 .Select(p => p.Name);
         }
+        #endregion
 
+        #region Validation methods
+        /// <summary>
+        /// Determines whether this is a valid device with the specified arguments.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <returns>
+        ///   <c>true</c> if this is a valid device based on the arguments; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsValidDevice(string protocol)
         {
-            throw new NotImplementedException();
+            return validationData
+                .Any(p => p.Name.Equals(protocol, StringComparison.Ordinal));
         }
 
+        /// <summary>
+        /// Determines whether this is a valid device with the specified arguments.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <param name="model">The model.</param>
+        /// <returns>
+        ///   <c>true</c> if this is a valid device based on the arguments; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsValidDevice(string protocol, string model)
         {
-            throw new NotImplementedException();
+            return validationData
+                .Where(p => p.Name.Equals(protocol, StringComparison.Ordinal))
+                .SelectMany(p => p.Models)
+                .Any(m => m.Name.Equals(model, StringComparison.Ordinal));
         }
 
+        /// <summary>
+        /// Determines whether this is a valid device with the specified arguments.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <param name="model">The model.</param>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns>
+        ///   <c>true</c> if this is a valid device based on the arguments; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsValidDevice(string protocol, string model, string parameter)
         {
-            throw new NotImplementedException();
+            return validationData
+                .Where(p => p.Name.Equals(protocol, StringComparison.Ordinal))
+                .SelectMany(p => p.Models)
+                .Where(m => m.Name.Equals(model, StringComparison.Ordinal))
+                .SelectMany(m => m.Parameters)
+                .Any(p => p.Name.Equals(parameter, StringComparison.Ordinal));
         }
 
+        /// <summary>
+        /// Determines whether this is a valid device with the specified arguments.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <param name="model">The model.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>
+        ///   <c>true</c> if this is a valid device based on the arguments; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsValidDevice(string protocol, string model, IEnumerable<string> parameters)
         {
-            throw new NotImplementedException();
+            IEnumerable<string> validParameters = validationData
+                .Where(p => p.Name.Equals(protocol, StringComparison.Ordinal))
+                .SelectMany(p => p.Models)
+                .Where(m => m.Name.Equals(model, StringComparison.Ordinal))
+                .SelectMany(m => m.Parameters)
+                .Select(p => p.Name);
+
+            foreach (string parameter in parameters)
+                if (!validParameters.Contains(parameter))
+                    return false;
+
+            return true;
         }
+
+        /// <summary>
+        /// Determines whether this is a valid device with the specified arguments.
+        /// This method will handle the parameters as name/value and validate the value with Regex if a pattern is available.
+        /// </summary>
+        /// <param name="protocol">The protocol.</param>
+        /// <param name="model">The model.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>
+        ///   <c>true</c> if this is a valid device based on the arguments; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsValidDevice(string protocol, string model, IDictionary<string, string> parameters)
+        {
+            IEnumerable<Parameter> validParameters = validationData
+                .Where(p => p.Name.Equals(protocol, StringComparison.Ordinal))
+                .SelectMany(p => p.Models)
+                .Where(m => m.Name.Equals(model, StringComparison.Ordinal))
+                .SelectMany(m => m.Parameters);
+
+            foreach (var parameter in parameters)
+            {
+                Parameter validParameter = validParameters.FirstOrDefault(p => p.Name.Equals(parameter.Key, StringComparison.Ordinal));
+                if (validParameter == null)
+                    return false;
+
+                if (validParameter.ValidationRegex != null && !Regex.IsMatch(parameter.Value, validParameter.ValidationRegex))
+                    return false;
+            }
+
+            return true;
+        }
+        #endregion
     }
 }
