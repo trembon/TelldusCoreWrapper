@@ -80,3 +80,40 @@ public class TelldusAPIController : ControllerBase
 	}
 }
 ```
+
+### Validation
+As there is no built in way to get a list of possible protocols/models/parameters for the devices I built a list in a service from the [documentation](https://developer.telldus.com/wiki/TellStick_conf). These validation methods are optional and are not forced in the wrapper.
+
+**Registration**
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+	...
+	services.AddSingleton<ITelldusDeviceValidationService, TelldusDeviceValidationService>();
+}
+```
+**Lists**
+```csharp
+public void DoSomething(ITelldusDeviceValidationService service)
+{
+	IEnumerable<string> protocols = service.GetProtocols();
+
+	foreach(string protocol in protocols)
+	{
+		IEnumerable<string> models = service.GetModels(protocol);
+		...
+	}
+}
+```
+**Validation**
+```csharp
+public void DoSomething(ITelldusDeviceValidationService service)
+{
+	service.IsValidDevice("arctech", "codeswitch", new string[] { "house", "unit" });
+}
+
+public void DoSomething(ITelldusDeviceValidationService service)
+{
+	service.IsValidDevice("arctech", "codeswitch", new Dictionary<string, string> { { "house", "B" }, { "unit", "5" } });
+}
+```
